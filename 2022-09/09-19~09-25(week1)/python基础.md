@@ -656,11 +656,13 @@ table = {'Sjoerd': 4127, 'Jack': 4098, 'Dcab': 8637678}
 print('Jack: {Jack:d}; Sjoerd: {Sjoerd:d}; Dcab: {Dcab:d}'.format(**table))
 ```
 
-补充：*和**符号出了算术运算之外，还有其它重要作用
+> 补充：*和**符号出了算术运算之外，还有其它重要作用
+>
+> *用于列表和元组，用于解包
+>
+> **用于字典，将字典解开成关键字参数
 
-*用于列表和元组，用于解包
 
-**用于字典，将字典解开成关键字参数
 
 ## 格式化字符串的方法
 
@@ -694,3 +696,342 @@ f.closed #True
 ```
 
 > 调用 `f.write()` 时，未使用 `with` 关键字，或未调用 `f.close()`，即使程序正常退出，也**可能** 导致 `f.write()`的参数没有完全写入磁盘。
+
+## 文件对象的方法
+
+- `f.read(size)` 可用于读取文件内容，它会读取一些数据，并返回字符串（文本模式），或字节串对象（在二进制模式下）。 *size*是可选的数值参数。
+
+- `f.readline()` 从文件中读取单行数据；字符串末尾保留换行符（`\n`），只有在文件不以换行符结尾时，文件的最后一行才会省略换行符。
+
+- 从文件中读取多行时，可以用循环遍历整个文件对象。
+
+    ```python
+    for line in f:
+       print(line, end='')
+    ```
+
+- `f.write(string)` 把 *string* 的内容写入文件，并返回写入的字符数。
+
+- `f.tell()` 返回整数，给出文件对象在文件中的当前位置，表示为二进制模式下时从文件开始的字节数，以及文本模式下的意义不明的数字。
+
+ ## 使用json保存结构化数据
+
+[`json`](https://docs.python.org/zh-cn/3.9/library/json.html#module-json) 标准模块采用 Python 数据层次结构，并将之转换为字符串表示形式；这个过程称为 *serializing* （序列化）。从字符串表示中重建数据称为 *deserializing* （解序化）。
+
+- 只需一行简单的代码即可查看某个对象的 JSON 字符串表现形式：
+
+```python
+import json
+x = [1, 'simple', 'list']
+json.dumps(x)
+# '[1, "simple", "list"]'
+```
+
+- Dumps()的变体dump()，将对象序列化为 [text file](https://docs.python.org/zh-cn/3.9/glossary.html#term-text-file) 。因此，如果 `f` 是 [text file](https://docs.python.org/zh-cn/3.9/glossary.html#term-text-file) 对象，可以这样做：
+
+```python
+json.dump(x, f)
+# 将json字符串输入文件f中
+x = json.load(f)
+# 读取json数据
+```
+
+# 11.类
+
+## 类定义
+
+基础语法：
+
+```python
+class ClassName:
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+## 类对象
+
+类对象支持两种操作：属性引用和实例化。
+
+### 属性引用 
+
+使用 Python 中所有属性引用所使用的标准语法: `obj.name`。 有效的属性名称是类对象被创建时存在于类命名空间中的所有名称。
+
+```
+class MyClass:
+    """A simple example class"""
+    i = 12345
+
+    def f(self):
+        return 'hello world'
+```
+
+那么 `MyClass.i` 和 `MyClass.f` 就是有效的属性引用，将分别返回一个整数和一个函数对象。 类属性也可以被赋值，因此可以通过赋值来更改 `MyClass.i` 的值。
+
+### 实例化
+
+类的 *实例化* 使用函数表示法。 可以把类对象视为是返回该类的一个新实例的不带参数的函数。 举例来说（假设使用上述的类）:
+
+```python
+x = MyClass()
+```
+
+### 构造函数
+
+类有一个名为 `__init__()` 的特殊方法（**构造方法**），该方法在类实例化时会自动调用，像下面这样：
+
+```python
+def __init__(self):
+    self.data = []
+```
+
+类定义了 __init__() 方法，类的实例化操作会自动调用 __init__() 方法。
+
+>self代表类的实例，而非类对象
+
+> 类的方法与普通的函数只有一个特别的区别——它们必须有一个额外的**第一个参数名称**, 按照惯例它的名称是 self。
+
+```python
+class Test:
+    def prt(self):
+        print(self)
+        print(self.__class__)
+ 
+t = Test()
+t.prt()
+```
+
+## 继承
+
+派生类的定义如下：
+
+```python
+class DerivedClassName(BaseClassName):
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+子类会继承父类的的属性和方法，BaseClassName（实例中的基类名）必须与派生类定义在一个作用域内。
+
+```python
+#类定义
+class people:
+    #定义基本属性
+    name = ''
+    age = 0
+    #定义私有属性,私有属性在类外部无法直接进行访问
+    __weight = 0
+    #定义构造方法
+    def __init__(self,n,a,w):
+        self.name = n
+        self.age = a
+        self.__weight = w
+    def speak(self):
+        print("%s 说: 我 %d 岁。" %(self.name,self.age))
+ 
+ #单继承示例
+class student(people):
+    grade = ''
+    def __init__(self,n,a,w,g):
+        #调用父类的构函
+        people.__init__(self,n,a,w)
+        self.grade = g
+    #覆写父类的方法
+    def speak(self):
+        print("%s 说: 我 %d 岁了，我在读 %d 年级"%(self.name,self.age,self.grade))
+ 
+ 
+ 
+ s = student('ken',10,60,3)
+s.speak()
+```
+
+## 多继承
+
+多继承的类定义如下例：
+
+```python
+class DerivedClassName(Base1, Base2, Base3):
+    <statement-1>
+    .
+    .
+    .
+    <statement-N>
+```
+
+需要注意圆括号中父类的顺序，若是父类中有相同的方法名，而在子类使用时未指定，python从左至右搜索 即方法在子类中未找到时，从左到右查找父类中是否包含方法。
+
+```python
+#类定义
+class people:
+    #定义基本属性
+    name = ''
+    age = 0
+    #定义私有属性,私有属性在类外部无法直接进行访问
+    __weight = 0
+    #定义构造方法
+    def __init__(self,n,a,w):
+        self.name = n
+        self.age = a
+        self.__weight = w
+    def speak(self):
+        print("%s 说: 我 %d 岁。" %(self.name,self.age))
+ 
+ #单继承示例
+class student(people):
+    grade = ''
+    def __init__(self,n,a,w,g):
+        #调用父类的构函
+        people.__init__(self,n,a,w)
+        self.grade = g
+    #覆写父类的方法
+    def speak(self):
+        print("%s 说: 我 %d 岁了，我在读 %d 年级"%(self.name,self.age,self.grade))
+ 
+ #另一个类，多重继承之前的准备
+class speaker():
+    topic = ''
+    name = ''
+    def __init__(self,n,t):
+        self.name = n
+        self.topic = t
+    def speak(self):
+        print("我叫 %s，我是一个演说家，我演讲的主题是 %s"%(self.name,self.topic))
+ 
+ #多重继承
+class sample(speaker,student):
+    a =''
+    def __init__(self,n,a,w,g,t):
+        student.__init__(self,n,a,w,g)
+        speaker.__init__(self,n,t)
+ 
+ test = sample("Tim",25,80,4,"Python")
+test.speak()   #方法名同，默认调用的是在括号中参数位置排前父类的方法
+```
+
+## 方法重写
+
+如果你的父类方法的功能不能满足你的需求，你可以在子类重写你父类的方法，实例如下：
+
+```python
+class Parent:        # 定义父类
+   def myMethod(self):
+      print ('调用父类方法')
+ 
+class Child(Parent): # 定义子类
+   def myMethod(self):
+      print ('调用子类方法')
+ 
+c = Child()          # 子类实例
+c.myMethod()         # 子类调用重写方法
+super(Child,c).myMethod() #用子类对象调用父类已被覆盖的方法
+
+"""
+super函数可以调用继承链中任意父类的被覆盖的方法，语法为：
+super(class, self)
+"""
+```
+
+## 类属性与方法
+
+### 类的私有属性和方法
+
+两个下划线开头，声明该属性或方法为私有，不能在类的外部被使用或直接访问。在类内部的方法中使用时 `self.__private_attrs`或`self.__private_method`。
+
+### 类的方法
+
+在类的内部，使用 def 关键字来定义一个方法，与一般函数定义不同，类方法必须包含参数 **self**，且为第一个参数，**self** 代表的是类的实例。
+
+### 类的专有方法（魔法函数）
+
+- **`__init__` :** 构造函数，在生成对象时调用
+- **`__del__`:** 析构函数，释放对象时使用
+- **`__repr__` :** 打印，转换
+- **`__setitem__` :** 按照索引赋值
+- **`__getitem__`:** 按照索引获取值
+- **`__len__`:** 获得长度
+- **`__cmp__`:** 比较运算
+- **`__call__`:** 函数调用
+- **`__add__`:** 加运算
+- **`__sub__`:** 减运算
+- **`__mul__`:** 乘运算
+- **`__truediv__`:** 除运算
+- **`__mod__`:** 求余运算
+- **`__pow__`:** 乘方
+
+## 运算符重载
+
+用上述专有方法进行运算符重载
+
+## 迭代器
+
+容器对象：列表、元组、字典等。[`for`](https://docs.python.org/zh-cn/3.9/reference/compound_stmts.html#for) 语句会在容器对象上调用 [`iter()`](https://docs.python.org/zh-cn/3.9/library/functions.html#iter)。 该函数返回一个定义了 [`__next__()`](https://docs.python.org/zh-cn/3.9/library/stdtypes.html#iterator.__next__) 方法的迭代器对象，此方法将逐一访问容器中的元素。当元素用尽时，[`__next__()`](https://docs.python.org/zh-cn/3.9/library/stdtypes.html#iterator.__next__) 将引发 [`StopIteration`](https://docs.python.org/zh-cn/3.9/library/exceptions.html#StopIteration) 异常来通知终止 `for` 循环。 你可以使用 [`next()`](https://docs.python.org/zh-cn/3.9/library/functions.html#next) 内置函数来调用 [`__next__()`](https://docs.python.org/zh-cn/3.9/library/stdtypes.html#iterator.__next__) 方法；这个例子显示了它的运作方式:
+
+```python
+s = 'abc'
+it = iter(s)
+#<str_iterator object at 0x10c90e650>
+next(it)
+# 'a'
+next(it)
+# 'b'
+next(it)
+# 'c'
+```
+
+可以给自己类添加迭代器，定义一个`__iter__()`方法来返回一个带有`__next__()`方法的对象。
+
+```python
+class Reverse:
+    """Iterator for looping over a sequence backwards."""
+    def __init__(self, data):
+        self.data = data
+        self.index = len(data)
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index == 0:
+            raise StopIteration  # 异常用于标识迭代的完成，防止出现无限循环的情况
+        self.index = self.index - 1
+        return self.data[self.index]
+        
+rev = Reverse('spam')
+iter(rev) #生成迭代器
+
+for char in rev:
+    print(char)
+```
+
+## 生成器
+
+在 Python 中，使用了 yield 的函数被称为生成器（generator）。跟普通函数不同的是，生成器是一个返回迭代器的函数，只能用于迭代操作，更简单点理解生成器就是一个迭代器。
+
+> 在调用生成器运行的过程中，每次遇到 yield 时函数会暂停并保存当前所有的运行信息，返回 yield 的值, 并在下一次执行 next() 方法时从当前位置继续运行。
+
+```python
+import sys
+ 
+def fibonacci(n): # 生成器函数 - 斐波那契
+    a, b, counter = 0, 1, 0
+    while True:
+        if (counter > n): 
+            return
+        yield a # yield会返回a的值，每次调用__next__()时,会使用保存的信息继续运行
+        a, b = b, a + b
+        counter += 1
+f = fibonacci(10) # f 是一个迭代器，由生成器返回生成
+ 
+while True:
+    try:
+        print (__next__(f), end=" ")
+    except StopIteration:
+        sys.exit()
+```
+
