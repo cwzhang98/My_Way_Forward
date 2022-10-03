@@ -48,7 +48,7 @@ $\theta _j^{t+1}\leftarrow \theta _j^t-\frac{\eta}{\sigma _j^t}g_i^t$           
 
 > **Adam:** RMSProp + Momentum
 
-# Learning Rate Sshceduling
+# Learning Rate Shceduling
 
 > Learning Rate Decay
 
@@ -57,3 +57,23 @@ As the training goes, we are closer to the destination, so we reduce the learnin
 > Warm Up
 
 Increase and Decrease(implement in resent)
+
+# Batch Normalization
+
+在训练神经网络的过程中，会存在不同的feature的数值范围不同的情况，造成对于不同feature来说，梯度的差距过大。
+
+## feature normalization
+
+for each：
+
+- dimension: $i$
+- mean: $m_i$
+- Standard deviation: $\sigma _i$
+
+对每个$x^i$都做如下处理：
+$$
+\tilde{x_i^r} \leftarrow \frac{x^r_i-m_i}{\sigma_i}
+$$
+用$\tilde{x_i^r}$替换所有向量同一个维度的值$x_i^r$,使得每一个维度的的均值为0，标准差为1。
+
+往往训练集数据量很大，无法normalize所有的数据，对每一个batch进行normalize。
