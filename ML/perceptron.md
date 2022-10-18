@@ -200,11 +200,11 @@ $$
 \end{aligned}
 $$
 
-其中，由于$(x_1y_i)$是误分类点，所以${\color{red}y_i\hat{w}_{k-1}\cdot \hat{x}_i}\le0$
+其中，由于$(x_i,y_i)$是误分类点，所以${\color{red}y_i\hat{w}_{k-1}\cdot \hat{x}_i}\le0$
 
 结合(23)式和(24)式，得：
 $$
-k\eta\gamma\le\hat{w}_k\cdot\hat{w}_{opt}\le\parallel\hat{w}_k\parallel\cdot\parallel\hat{w}_{opt}\parallel\le\sqrt{k}\eta R
+k\eta\gamma\le\hat{w}_k\cdot\hat{w}_{opt}\le\parallel\hat{w}_k\parallel\cdot\parallel\hat{w}_{opt}\parallel\le\parallel \hat{w}_k\parallel^2\le\sqrt{k}\eta R
 $$
 则消去$\eta$,得
 $$
@@ -218,5 +218,4 @@ $$
 $$
 k \le(\frac{R}{\gamma})^2
 $$
-
 
